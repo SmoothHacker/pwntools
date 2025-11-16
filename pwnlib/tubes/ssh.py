@@ -25,6 +25,7 @@ from pwnlib.util import misc
 from pwnlib.util import packing
 from pwnlib.util import safeeval
 from pwnlib.util.sh_string import sh_string
+import contextlib
 
 # Kill the warning line:
 # No handlers could be found for logger "paramiko.transport"
@@ -99,7 +100,7 @@ class ssh_channel(sock):
         # If this object is enabled for DEBUG-level logging, don't hide
         # anything about the command that's actually executed.
         if process and self.isEnabledFor(logging.DEBUG):
-            msg = 'Opening new channel: %r' % ((process,) or 'shell')
+            msg = 'Opening new channel: %r' % ((process,))
 
         with self.waitfor(msg) as h:
             import paramiko
@@ -115,10 +116,8 @@ class ssh_channel(sock):
 
                 def resizer():
                     if self.sock:
-                        try:
+                        with contextlib.suppress(paramiko.ssh_exception.SSHException):
                             self.sock.resize_pty(term.width, term.height)
-                        except paramiko.ssh_exception.SSHException:
-                            pass
 
                 self.resizer = resizer
                 term.term.on_winch.append(self.resizer)  # XXX memory leak
@@ -670,16 +669,17 @@ class ssh(Timeout, Logger):
 
             if not ignore_config and os.path.exists(config_file):
                 ssh_config  = paramiko.SSHConfig()
-                ssh_config.parse(open(config_file))
-                host_config = ssh_config.lookup(host)
-                if 'hostname' in host_config:
-                    self.host = host = host_config['hostname']
-                if not user and 'user' in host_config:
-                    self.user = user = host_config['user']
-                if not keyfile and 'identityfile' in host_config:
-                    keyfile = host_config['identityfile'][0]
-                    if keyfile.lower() == 'none':
-                        keyfile = None
+                with open(config_file) as conf_file:
+                    ssh_config.parse(conf_file)
+                    host_config = ssh_config.lookup(host)
+                    if 'hostname' in host_config:
+                        self.host = host = host_config['hostname']
+                    if not user and 'user' in host_config:
+                        self.user = user = host_config['user']
+                    if not keyfile and 'identityfile' in host_config:
+                        keyfile = host_config['identityfile'][0]
+                        if keyfile.lower() == 'none':
+                            keyfile = None
         except Exception as e:
             self.debug("An error occurred while parsing ~/.ssh/config:\n%s" % e)
 
@@ -1452,9 +1452,8 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
             b'Hello, world'
 
         """
-        with self.progress('Downloading %r' % remote) as p:
-            with open(self._download_to_cache(remote, p, fingerprint), 'rb') as fd:
-                return fd.read()
+        with self.progress('Downloading %r' % remote) as p, open(self._download_to_cache(remote, p, fingerprint), 'rb') as fd:
+            return fd.read()
 
     def download_file(self, remote, local = None):
         """Downloads a file from the remote server.
@@ -1510,10 +1509,7 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
 
         self.info("Downloading %r to %r" % (remote, local))
 
-        if ignore_failed_read:
-            opts = b" --ignore-failed-read"
-        else:
-            opts = b""
+        opts = b" --ignore-failed-read" if ignore_failed_read else b""
         with context.local(log_level='error'):
             remote_tar = self.mktemp()
             cmd = b'tar %s -C %s -czf %s .' % \
@@ -1522,19 +1518,19 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
                    sh_string(remote_tar))
             tar = self.system(cmd)
 
-            if 0 != tar.wait():
+            if tar.wait() != 0:
                 self.error("Could not create remote tar")
 
-            local_tar = tempfile.NamedTemporaryFile(suffix='.tar.gz')
-            self.download_file(remote_tar, local_tar.name)
+            with tempfile.NamedTemporaryFile(suffix='.tar.gz') as local_tar:
+                self.download_file(remote_tar, local_tar.name)
 
-            # Delete temporary tarfile from remote host
-            if self.sftp:
-                self.unlink(remote_tar)
-            else:
-                self.system(b'rm ' + sh_string(remote_tar)).wait()
-            tar = tarfile.open(local_tar.name)
-            tar.extractall(local)
+                # Delete temporary tarfile from remote host
+                if self.sftp:
+                    self.unlink(remote_tar)
+                else:
+                    self.system(b'rm ' + sh_string(remote_tar)).wait()
+                with tarfile.open(local_tar.name) as tar:
+                    tar.extractall(local)
 
 
     def upload_data(self, data, remote):
@@ -1687,7 +1683,7 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
         with self.system(b'test -d ' + sh_string(file_or_directory)) as io:
             is_dir = io.wait()
 
-        if 0 == is_dir:
+        if is_dir == 0:
             self.download_dir(file_or_directory, local)
         else:
             self.download_file(file_or_directory, local)
@@ -2031,44 +2027,41 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
             'aarch64': 'arm'
         }.get(self.arch, self.arch)
 
-        with context.local(arch=arch, bits=32, os=self.os, aslr=True):
-            with context.quiet:
-                try:
-                    sc = pwnlib.shellcraft.cat('/proc/self/maps') \
-                       + pwnlib.shellcraft.exit(0)
+        with context.local(arch=arch, bits=32, os=self.os, aslr=True), context.quiet:
+            try:
+                sc = pwnlib.shellcraft.cat('/proc/self/maps') \
+                    + pwnlib.shellcraft.exit(0)
 
-                    elf = pwnlib.elf.elf.ELF.from_assembly(sc, shared=True)
-                except Exception:
-                    self.warn_once("Can't determine ulimit ASLR status")
-                    self._aslr_ulimit = False
-                    return self._aslr_ulimit
+                elf = pwnlib.elf.elf.ELF.from_assembly(sc, shared=True)
+            except Exception:
+                self.warn_once("Can't determine ulimit ASLR status")
+                self._aslr_ulimit = False
+                return self._aslr_ulimit
 
-                def preexec():
-                    import resource
-                    try:
-                        resource.setrlimit(resource.RLIMIT_STACK, (-1, -1))
-                    except Exception:
-                        pass
+            def preexec():
+                import resource
+                with contextlib.suppress(Exception):
+                    resource.setrlimit(resource.RLIMIT_STACK, (-1, -1))
 
-                # Move to a new temporary directory
-                cwd = self.cwd
-                tmp = self.set_working_directory()
+            # Move to a new temporary directory
+            cwd = self.cwd
+            tmp = self.set_working_directory()
 
-                try:
-                    self.upload(elf.path, './aslr-test')
-                except IOError:
-                    self.warn_once("Couldn't check ASLR ulimit trick")
-                    self._aslr_ulimit = False
-                    return False
+            try:
+                self.upload(elf.path, './aslr-test')
+            except IOError:
+                self.warn_once("Couldn't check ASLR ulimit trick")
+                self._aslr_ulimit = False
+                return False
 
-                self.process(['chmod', '+x', './aslr-test']).wait()
-                maps = self.process(['./aslr-test'], preexec_fn=preexec).recvall()
+            self.process(['chmod', '+x', './aslr-test']).wait()
+            maps = self.process(['./aslr-test'], preexec_fn=preexec).recvall()
 
-                # Move back to the old directory
-                self.cwd = cwd
+            # Move back to the old directory
+            self.cwd = cwd
 
-                # Clean up the files
-                self.process(['rm', '-rf', tmp]).wait()
+            # Clean up the files
+            self.process(['rm', '-rf', tmp]).wait()
 
         # Check for 555555000 (1/3 of the address space for PAE)
         # and for 40000000 (1/3 of the address space with 3BG barrier)

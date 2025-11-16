@@ -30,11 +30,8 @@ def get(cap, *args, **kwargs):
             s = curses.tigetnum(cap)
             if s == -2:
                 s = curses.tigetflag(cap)
-                if s == -1:
-                    # default to empty string so tparm doesn't fail
-                    s = b''
-                else:
-                    s = bool(s)
+                # default to empty string so tparm doesn't fail
+                s = b'' if s == -1 else bool(s)
         cache[cap] = s
     # if `s' is not set `curses.tparm' will throw an error if given arguments
     if args and s:

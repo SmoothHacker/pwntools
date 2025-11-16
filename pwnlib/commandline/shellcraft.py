@@ -11,6 +11,7 @@ pwnlib.args.free_form = False
 
 from pwn import *
 from pwnlib.commandline import common
+import contextlib
 
 
 #  ____  _          _ _                 __ _
@@ -292,10 +293,8 @@ def main(args):
 
         # Captain ugliness saves the day!
         for i, val in enumerate(func_args):
-            try:
+            with contextlib.suppress(ValueError):
                 func_args[i] = util.safeeval.expr(val)
-            except ValueError:
-                pass
 
         # And he strikes again!
         list(map(common.context_arg, name.split('.')))
@@ -330,8 +329,7 @@ def main(args):
 
     if args.format in ['e','elf']:
         args.format = 'default'
-        try: os.fchmod(args.out.fileno(), 0o700)
-        except OSError: pass
+        with contextlib.suppress(OSError): os.fchmod(args.out.fileno(), 0o700)
 
 
         if not args.avoid:

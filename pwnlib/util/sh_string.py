@@ -324,10 +324,9 @@ def test(original):
 
         progress = log.progress('%s: %r' % (binary, original))
 
-        with context.quiet:
-            with process(shell) as p:
-                data = p.recvall(timeout=2)
-                p.kill()
+        with context.quiet, process(shell) as p:
+            data = p.recvall(timeout=2)
+            p.kill()
 
         # Remove exactly one trailing newline added by echo
         # We cannot assume "echo -n" exists.

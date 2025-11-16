@@ -62,10 +62,7 @@ class builder:
       # Select p,s,t and q */
       arr = [3, 7]
       p = random_funcs.randel(arr)
-      if p == 3:
-         s = 7
-      else:
-         s = 3
+      s = 7 if p == 3 else 3
       t = 6
       arr2 = [8, 9]
       q = random_funcs.randel(arr2)
@@ -80,10 +77,7 @@ class builder:
          #EORMIS rp, r4, #(randomly selected alphanumeric value)*/
          dec_loop += ARM_Instructions.dpimm(EOR, MI, 1, p, 4, rsalnum)
 
-      if icache_flush == 1:
-         dist = 0x2c
-      else:
-         dist = 0x28
+      dist = 44 if icache_flush == 1 else 40
 
       offset = alphanum_byte.off_gen(dist + 0x04)
 
@@ -379,13 +373,10 @@ class builder:
       while p <= ((total-8) // 4):
          op = random_funcs.randel(arrop)
          cond = random_funcs.randel(arrcond)
-         if op == EOR:
-            s = 1
-         else:
-            s = random_funcs.randel(arrs)
+         s = 1 if op == EOR else random_funcs.randel(arrs)
          d = random_funcs.randel(arrd)
          n = random_funcs.randel(arrn)
-         if p == topv or p == topw:
+         if p in (topv, topw):
             output += ARM_Instructions.dpimm(op, cond, s, d, n, self.x)
          else:
             output += ARM_Instructions.dpimm(op, cond, s, d, n, alphanum_byte.alphanumeric_get_byte())

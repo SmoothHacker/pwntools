@@ -8,6 +8,7 @@ from pwnlib.util.misc import which, parse_ldd_output, write
 
 from sys import stderr
 from mako.lookup import TemplateLookup, Template
+import contextlib
 
 parser = common.parser_commands.add_parser(
     'template',
@@ -231,8 +232,7 @@ def main(args):
 
     # If redirected to a file, make the resulting script executable
     if not sys.stdout.isatty():
-        try: os.fchmod(sys.stdout.fileno(), 0o700)
-        except OSError: pass
+        with contextlib.suppress(OSError): os.fchmod(sys.stdout.fileno(), 0o700)
 
 if __name__ == '__main__':
     pwnlib.commandline.common.main(__file__, main)

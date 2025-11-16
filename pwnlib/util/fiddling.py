@@ -40,10 +40,7 @@ def unhex(s):
     """
     s = s.strip()
     if len(s) % 2 != 0:
-        if isinstance(s, (bytes, bytearray)):
-            s = b'0' + s
-        else:
-            s = '0' + s
+        s = b'0' + s if isinstance(s, (bytes, bytearray)) else '0' + s
     return binascii.unhexlify(s)
 
 def enhex(x):

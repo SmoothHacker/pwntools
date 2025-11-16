@@ -22,10 +22,7 @@ LSR = 11
 # (EOR/SUB/RSB)(PL/MI){S} rd, rn, #imm 
 # ==================================== 
 def dpimm(op, cond, s, d, n, imm):
-   if type(imm) == int:
-      x = chr(imm & 0xff)
-   else:
-      x = imm
+   x = chr(imm & 255) if type(imm) == int else imm
    x += chr((d << 4) & 0xff)
    if s:
       if op == EOR:
@@ -90,10 +87,7 @@ def dpshiftreg(op, s, d, n, a, shift, b):
 # (LDR/STR)(PL/MI)B rd, [rn, #-imm] 
 # ================================= 
 def lsbyte(op, cond, d, n, imm):
-   if type(imm) == int:
-      x = chr(imm & 0xff)
-   else:
-      x = imm
+   x = chr(imm & 255) if type(imm) == int else imm
    x += chr((d << 4) & 0xff)
 #   x = chr(imm) + chr((d << 4) & 0xff)
    if op == STR:

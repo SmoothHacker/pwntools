@@ -96,10 +96,7 @@ class PathCompleter(Completer):
         if prefix == self._cur_prefix:
             return
         self._completions = []
-        if os.path.isabs(prefix):
-            path = prefix
-        else:
-            path = os.path.join('.', prefix)
+        path = prefix if os.path.isabs(prefix) else os.path.join('.', prefix)
         if os.path.isdir(path) and prefix and prefix[-1] != '/':
             self._completions = [prefix]
             return

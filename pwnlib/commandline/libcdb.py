@@ -266,10 +266,9 @@ def main(args):
                 log.failure('File does not exist %s', args.file)
                 continue
 
-            if args.unstrip:
-                if not libcdb.unstrip_libc(file):
-                    log.failure('Failed to unstrip libc binary %s', file)
-                    continue
+            if args.unstrip and not libcdb.unstrip_libc(file):
+                log.failure('Failed to unstrip libc binary %s', file)
+                continue
 
             print_libc_elf(ELF(file, checksec=False))
 

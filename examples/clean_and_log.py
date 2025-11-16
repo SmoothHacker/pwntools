@@ -14,13 +14,12 @@ from pwn import *
 from multiprocessing import Process
 
 def submit_data():
-    with context.quiet:
-        with listen(1337) as io:
-            io.wait_for_connection()
-            io.sendline(b'prefix sometext')
-            io.sendline(b'prefix someothertext')
-            io.sendline(b'here comes the flag')
-            io.sendline(b'LostInTheInterTubes')
+    with context.quiet, listen(1337) as io:
+        io.wait_for_connection()
+        io.sendline(b'prefix sometext')
+        io.sendline(b'prefix someothertext')
+        io.sendline(b'here comes the flag')
+        io.sendline(b'LostInTheInterTubes')
 
 if __name__ == '__main__':
     p = Process(target=submit_data)

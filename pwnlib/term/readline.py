@@ -165,10 +165,7 @@ def update_search_results():
     if search_idx is None:
         return
     show_suggestions = False
-    if search_results:
-        hidx = search_results[search_idx][0]
-    else:
-        hidx = None
+    hidx = search_results[search_idx][0] if search_results else None
     search_results = []
     search_idx = 0
     if not buffer_left:

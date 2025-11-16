@@ -380,7 +380,7 @@ class Module(types.ModuleType):
             [<function crc_crc_16_dnp at ...>]
         """
         candidates = []
-        for v in known.all_crcs.keys():
+        for v in known.all_crcs:
             func = getattr(crc, v)
             if func(data) == checksum:
                 candidates.append(func)

@@ -115,10 +115,7 @@ class SSHPath(PosixPath):
         if self.ssh.host != other.ssh.host:
             return False
 
-        if self.path != other.path:
-            return False
-
-        return True
+        return self.path == other.path
 
     def __hash__(*a, **kw): ""; raise NotImplementedError
     def __lt__(*a, **kw): ""; raise NotImplementedError
@@ -509,10 +506,7 @@ class SSHPath(PosixPath):
             self.ssh.sftp.mkdir(self.path, mode=mode)
             return
 
-        if not self.is_absolute():
-            path = self._new(self.ssh.cwd)
-        else:
-            path = self._new('/')
+        path = self._new(self.ssh.cwd) if not self.is_absolute() else self._new('/')
 
         parts = self.path.split(self.sep)
 
@@ -705,10 +699,7 @@ class SSHPath(PosixPath):
         if not self.exists():
             return False
 
-        if self.stat().st_mode & 0o040000:
-            return True
-
-        return False
+        return bool(self.stat().st_mode & 16384)
 
     def is_file(self):
         """Returns True if the path exists and is a file
@@ -729,10 +720,7 @@ class SSHPath(PosixPath):
         if not self.exists():
             return False
 
-        if self.stat().st_mode & 0o040000:
-            return False
-
-        return True
+        return not self.stat().st_mode & 16384
 
     def is_symlink(self):
         raise NotImplementedError()

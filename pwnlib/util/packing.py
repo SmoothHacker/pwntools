@@ -33,7 +33,6 @@ Examples:
 from __future__ import absolute_import
 from __future__ import division
 
-import collections
 import struct
 import sys
 import warnings
@@ -1082,10 +1081,7 @@ def dd(dst, src, count = 0, skip = 0, seek = 0, truncate = False):
         src = src_
 
     elif isinstance(src, bytes):
-        if count:
-            src = src[seek : seek + count]
-        else:
-            src = src[seek:]
+        src = src[seek:seek + count] if count else src[seek:]
 
     elif hasattr(src, '__iter__'):
         src = src[seek:]

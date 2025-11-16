@@ -240,10 +240,7 @@ def normalize_argv_env(argv, env, log, level=2):
 
     # Create a duplicate so we can modify it safely
     env2 = []
-    if hasattr(env, 'items'):
-        env_items = env.items()
-    else:
-        env_items = env
+    env_items = env.items() if hasattr(env, 'items') else env
     if env:
         for k,v in env_items:
             if not isinstance(k, (bytes, str)):

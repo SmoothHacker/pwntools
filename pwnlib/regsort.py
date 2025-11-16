@@ -243,10 +243,7 @@ def regsort(in_out, all_regs, mapping = None, tmp = None, xchg = True, randomize
         randomize = context.randomize
 
     if mapping is None:
-        if hasattr(all_regs, 'keys'):
-            mapping = all_regs
-        else:
-            mapping = {}
+        mapping = all_regs if hasattr(all_regs, 'keys') else {}
 
     sentinel = object()
 

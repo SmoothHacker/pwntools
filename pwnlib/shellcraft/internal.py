@@ -118,9 +118,8 @@ def make_function(funcname, filename, directory):
     local_ctx = get_context_from_dirpath(directory)
 
     def res(*args, **kwargs):
-        with render_global.go_inside() as was_inside:
-            with context.local(**local_ctx):
-                lines = template.render(*args, **kwargs).split('\n')
+        with render_global.go_inside() as was_inside, context.local(**local_ctx):
+            lines = template.render(*args, **kwargs).split('\n')
         for i, line in enumerate(lines):
             def islabelchar(c):
                 return c.isalnum() or c == '.' or c == '_'

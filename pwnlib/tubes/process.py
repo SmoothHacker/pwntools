@@ -35,6 +35,7 @@ from pwnlib.util.misc import parse_ldd_output
 from pwnlib.util.misc import which
 from pwnlib.util.misc import normalize_argv_env
 from pwnlib.util.packing import _decode
+import contextlib
 
 log = getLogger(__name__)
 
@@ -587,10 +588,7 @@ class process(tube):
             executable = executable.decode('utf-8')
 
         path = env and env.get(b'PATH')
-        if path:
-            path = path.decode()
-        else:
-            path = os.environ.get('PATH')
+        path = path.decode() if path else os.environ.get('PATH')
         # Do not change absolute paths to binaries
         if executable.startswith(os.path.sep):
             pass
@@ -738,10 +736,8 @@ class process(tube):
         # should be safe to read without expecting it to block.
         data = ''
 
-        try:
+        with contextlib.suppress(IOError):
             data = self.proc.stdout.read(numb)
-        except IOError:
-            pass
 
         if not data:
             self.shutdown("recv")

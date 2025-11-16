@@ -481,10 +481,7 @@ def cpp(shellcode):
         >>> cpp("SYS_setresuid", os = "freebsd")
         '311\n'
     """
-    if platform.system() == 'Windows':
-        cpp = which_binutils('cpp')
-    else:
-        cpp = 'cpp'
+    cpp = which_binutils('cpp') if platform.system() == 'Windows' else 'cpp'
 
     code = _include_header() + shellcode
     cmd  = [
@@ -567,10 +564,7 @@ def make_elf_from_assembly(assembly,
         log.error("Cannot specify a VMA for a shared library.")
 
     if vma is None:
-        if shared:
-            vma = 0
-        else:
-            vma = 0x10000000
+        vma = 0 if shared else 268435456
 
     if context.arch == 'thumb':
         to_thumb = shellcraft.arm.to_thumb()

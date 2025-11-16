@@ -22,6 +22,7 @@ from pwnlib.util import fiddling
 from pwnlib.util import iters
 from pwnlib.util import misc
 from pwnlib.util import packing
+import contextlib
 
 
 class tube(Timeout, Logger):
@@ -393,10 +394,7 @@ class tube(Timeout, Logger):
                         end = j + len(d)
                 if start < len(top):
                     self.unrecv(top[end:])
-                    if drop:
-                        top = top[:start]
-                    else:
-                        top = top[:end]
+                    top = top[:start] if drop else top[:end]
                     return b''.join(data) + top
                 if len(top) > longest:
                     i = -longest - 1
@@ -767,10 +765,7 @@ class tube(Timeout, Logger):
             regex = packing._need_bytes(regex)
             regex = re.compile(regex)
 
-        if exact:
-            pred = regex.match
-        else:
-            pred = regex.search
+        pred = regex.match if exact else regex.search
 
         if capture:
             return pred(self.recvpred(pred, timeout = timeout))
@@ -794,10 +789,7 @@ class tube(Timeout, Logger):
             regex = packing._need_bytes(regex)
             regex = re.compile(regex)
 
-        if exact:
-            pred = regex.match
-        else:
-            pred = regex.search
+        pred = regex.match if exact else regex.search
 
         return self.recvline_pred(pred, keepends=keepends, drop=drop, timeout=timeout)
 
@@ -1601,10 +1593,8 @@ class tube(Timeout, Logger):
 
         Inherited from :class:`Timeout`.
         """
-        try:
+        with contextlib.suppress(NotImplementedError):
             self.settimeout_raw(self.timeout)
-        except NotImplementedError:
-            pass
 
     def can_recv_raw(self, timeout):
         """can_recv_raw(timeout) -> bool

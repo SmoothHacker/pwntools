@@ -132,7 +132,7 @@ def query_libc_rip(params):
 def provider_libc_rip(search_target, search_type):
     # Build the request for the hash type
     # https://github.com/niklasb/libc-database/blob/master/searchengine/api.yml
-    if search_type in MAP_TYPES.keys():
+    if search_type in MAP_TYPES:
         search_type = MAP_TYPES[search_type]
 
     params = {search_type: search_target}
@@ -889,7 +889,7 @@ def _pack_libs_info(path, libs_id, libs_url, syms):
             continue
 
         # replace search_type
-        if search_type in MAP_TYPES.keys():
+        if search_type in MAP_TYPES:
             search_type = MAP_TYPES[search_type]
 
         info[search_type] = hash_func(path)

@@ -96,6 +96,7 @@ from pwnlib.util import packing
 from pwnlib.util.fiddling import unhex
 from pwnlib.util.misc import align, align_down, which
 from pwnlib.util.sh_string import sh_string
+import contextlib
 
 log = getLogger(__name__)
 
@@ -1709,10 +1710,8 @@ class ELF(ELFFile):
         if not dynamic or not isinstance(dynamic, DynamicSection):
             return None
 
-        try:
+        with contextlib.suppress(StopIteration):
             dt = next(t for t in dynamic.iter_tags() if tag == t.entry.d_tag)
-        except StopIteration:
-            pass
 
         return dt
 
@@ -2275,9 +2274,7 @@ class ELF(ELFFile):
     def fortify(self):
         """:class:`bool`: Whether the current binary was built with
         Fortify Source (``-DFORTIFY``)."""
-        if any(s.endswith('_chk') for s in self.plt):
-            return True
-        return False
+        return bool(any(s.endswith('_chk') for s in self.plt))
 
     @property
     def asan(self):
