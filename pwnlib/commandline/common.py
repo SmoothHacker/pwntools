@@ -4,6 +4,7 @@ import sys
 
 import pwnlib
 from pwnlib.context import context
+import contextlib
 
 choices = list(map(str, [16,32,64]))
 choices += list(context.oses)
@@ -11,14 +12,11 @@ choices += list(context.architectures)
 choices += list(context.endiannesses)
 
 def context_arg(arg):
-    try: context.arch = arg
-    except Exception: pass
-    try: context.os = arg
-    except Exception: pass
+    with contextlib.suppress(Exception): context.arch = arg
+    with contextlib.suppress(Exception): context.os = arg
     try: context.bits = int(arg)
     except Exception: arg
-    try: context.endian = arg
-    except Exception: pass
+    with contextlib.suppress(Exception): context.endian = arg
     return arg
 
 parser = argparse.ArgumentParser(description='Pwntools Command-line Interface',

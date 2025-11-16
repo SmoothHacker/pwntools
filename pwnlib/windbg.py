@@ -69,6 +69,7 @@ from pwnlib.context import context
 from pwnlib.log import getLogger
 from pwnlib.util import misc
 from pwnlib.util import proc
+import contextlib
 
 log = getLogger(__name__)
 
@@ -224,10 +225,8 @@ def attach(target, windbgscript=None, windbg_args=[]):
     windbg_pid = io.pid
 
     def kill():
-        try:
+        with contextlib.suppress(OSError):
             os.kill(windbg_pid, signal.SIGTERM)
-        except OSError:
-            pass
 
     atexit.register(kill)
 

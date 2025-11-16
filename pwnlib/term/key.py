@@ -102,7 +102,7 @@ class Matcher:
             return False
 
     def __neq__(self, other):
-        return not self == other
+        return self != other
 
     def __hash__(self):
         return self._hash
@@ -121,10 +121,7 @@ class Key:
         if self._str:
             return self._str
         if   self.type == kc.TYPE_UNICODE:
-            if self.code == ' ':
-                s = '<space>'
-            else:
-                s = self.code
+            s = '<space>' if self.code == ' ' else self.code
         elif self.type == kc.TYPE_KEYSYM:
             s = kc.KEY_NAMES.get(self.code, '<SYMNAME-%d>' % self.code)
         elif self.type == kc.TYPE_FUNCTION:

@@ -92,9 +92,7 @@ def isident(s):
         return False
     if s[0] not in first:
         return False
-    if not all(c in body for c in s[1:]):
-        return False
-    return True
+    return all(c in body for c in s[1:])
 
 def asbool(s):
     """

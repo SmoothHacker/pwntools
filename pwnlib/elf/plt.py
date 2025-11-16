@@ -7,6 +7,7 @@ from pwnlib.args import args
 from pwnlib.log import getLogger
 from pwnlib.util import fiddling
 from pwnlib.util import packing
+import contextlib
 
 log = getLogger(__name__)
 
@@ -139,11 +140,10 @@ def prepare_unicorn_and_context(elf, got, address, data):
         # Map the GOT so that MIPS can access it
         p_magic = packing.p32(magic_addr)
         start = got & (~0xfff)
-        try:
+
+        # Ignore double-mapping
+        with contextlib.suppress(Exception):
             uc.mem_map(start, 0x1000)
-        except Exception:
-            # Ignore double-mapping
-            pass
 
         uc.mem_write(got, p_magic)
 

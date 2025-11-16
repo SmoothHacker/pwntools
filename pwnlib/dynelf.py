@@ -541,10 +541,7 @@ class DynELF(object):
         #
         # Get a pretty name for the symbol to show the user
         #
-        if symb and lib:
-            pretty = '%r in %r' % (symb, lib)
-        else:
-            pretty = repr(symb or lib)
+        pretty = '%r in %r' % (symb, lib) if symb and lib else repr(symb or lib)
 
         if not pretty:
             self.failure("Must specify a library or symbol")
@@ -555,8 +552,7 @@ class DynELF(object):
         # If we are loading from a different library, create
         # a DynELF instance for it.
         #
-        if lib is not None: dynlib = self._dynamic_load_dynelf(lib)
-        else:   dynlib = self
+        dynlib = self._dynamic_load_dynelf(lib) if lib is not None else self
 
         if dynlib is None:
             log.failure("Could not find %r", lib)
@@ -1023,16 +1019,14 @@ class DynELF(object):
         phnum = leak.field(base, Ehdr.e_phnum)
 
         for i in range(phnum):
-            if leak.field_compare(phead, Phdr.p_type, constants.PT_LOAD) :
-                # the interesting pages are those that are aligned to PAGE_SIZE
-                if leak.field_compare(phead, Phdr.p_align, page_size) and \
-                    (readonly or leak.field(phead, Phdr.p_flags) & 0x02 != 0):
-                    vaddr = leak.field(phead, Phdr.p_vaddr)
-                    memsz = leak.field(phead, Phdr.p_memsz)
-                    # fix relative offsets
-                    if vaddr < base :
-                        vaddr += base
-                    yield vaddr, memsz
+            if leak.field_compare(phead, Phdr.p_type, constants.PT_LOAD) and \
+                (leak.field_compare(phead, Phdr.p_align, page_size) and (readonly or leak.field(phead, Phdr.p_flags) & 0x02 != 0)):
+                vaddr = leak.field(phead, Phdr.p_vaddr)
+                memsz = leak.field(phead, Phdr.p_memsz)
+                # fix relative offsets
+                if vaddr < base:
+                    vaddr += base
+                yield vaddr, memsz
             phead += sizeof(Phdr)
 
     def dump(self, libs = False, readonly = False):

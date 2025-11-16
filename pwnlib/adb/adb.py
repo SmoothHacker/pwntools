@@ -70,6 +70,7 @@ from pwnlib.log import getLogger
 from pwnlib.protocols.adb import AdbClient
 from pwnlib.util.packing import _decode
 from pwnlib.util import misc
+import contextlib
 
 log = getLogger(__name__)
 
@@ -156,9 +157,8 @@ def root():
     """
     log.info("Enabling root on %s" % context.device)
 
-    with context.quiet:
-        with AdbClient() as c:
-            reply = c.root()
+    with context.quiet, AdbClient() as c:
+        reply = c.root()
 
     if 'already running as root' in reply:
         return
@@ -420,10 +420,8 @@ def wait_for_device(kick=False):
     with log.waitfor("Waiting for device to come online") as w:
         with AdbClient() as c:
             if kick:
-                try:
+                with contextlib.suppress(Exception):
                     c.reconnect()
-                except Exception:
-                    pass
 
             serial = ''
             if context.device:
@@ -486,11 +484,10 @@ def remount():
 def unroot():
     """Restarts adbd as AID_SHELL."""
     log.info("Unrooting %s" % context.device)
-    with context.quiet:
-        with AdbClient() as c:
-            reply  = c.unroot()
+    with context.quiet, AdbClient() as c:
+        reply  = c.unroot()
 
-    if '0006closed' == reply:
+    if reply == '0006closed':
         return # Emulator doesnt care
 
     if 'restarting adbd as non root' not in reply:
@@ -577,30 +574,29 @@ def push(local_path, remote_path):
     if log.isEnabledFor(logging.DEBUG):
         msg += ' (%s)' % context.device
 
-    with log.waitfor(msg) as w:
-        with AdbClient() as c:
+    with log.waitfor(msg) as w, AdbClient() as c:
 
-            # We need to discover whether remote_path is a directory or not.
-            # If we cannot stat the full path, assume it's a path-plus-filename,
-            # where the filename does not exist.
+        # We need to discover whether remote_path is a directory or not.
+        # If we cannot stat the full path, assume it's a path-plus-filename,
+        # where the filename does not exist.
+        stat_ = c.stat(remote_path)
+        if not stat_:
+            remote_filename = os.path.basename(remote_path)
+            remote_path = os.path.dirname(remote_path)
             stat_ = c.stat(remote_path)
-            if not stat_:
-                remote_filename = os.path.basename(remote_path)
-                remote_path = os.path.dirname(remote_path)
-                stat_ = c.stat(remote_path)
 
-            # If we can't find the exact path, or its parent directory, bail!
-            if not stat_:
-                log.error('Could not stat %r' % remote_path)
+        # If we can't find the exact path, or its parent directory, bail!
+        if not stat_:
+            log.error('Could not stat %r' % remote_path)
 
-            # If we found the parent directory, append the filename
-            mode = stat_['mode']
-            if stat.S_ISDIR(mode):
-                remote_path = os.path.join(remote_path, remote_filename)
+        # If we found the parent directory, append the filename
+        mode = stat_['mode']
+        if stat.S_ISDIR(mode):
+            remote_path = os.path.join(remote_path, remote_filename)
 
-            c.write(remote_path,
-                    misc.read(local_path),
-                    callback=_create_adb_push_pull_callback(w))
+        c.write(remote_path,
+                misc.read(local_path),
+                callback=_create_adb_push_pull_callback(w))
 
     return remote_path
 
@@ -842,8 +838,8 @@ def process(argv, *a, **kw):
 
     message = "Starting %s process %r" % ('Android', argv[0])
 
-    if log.isEnabledFor(logging.DEBUG):
-        if argv != [argv[0]]: message += ' argv=%r ' % argv
+    if log.isEnabledFor(logging.DEBUG) and argv != [argv[0]]: 
+        message += ' argv=%r ' % argv
 
     with log.progress(message) as p:
         return AdbClient().execute(argv)
@@ -1415,7 +1411,7 @@ def compile(source):
 
     result = io.recvall()
 
-    if 0 != io.poll():
+    if io.poll() != 0:
         log.error("Build failed:\n%s", result)
 
     # Find all of the output files
@@ -1564,17 +1560,16 @@ def install(apk, *arguments):
     basename = os.path.basename(apk)
     target_path = '/data/local/tmp/{}.apk'.format(basename)
 
-    with log.progress("Installing APK {}".format(basename)) as p:
-        with context.quiet:
-            p.status('Copying APK to device')
-            push(apk, target_path)
+    with log.progress("Installing APK {}".format(basename)) as p, context.quiet:
+        p.status('Copying APK to device')
+        push(apk, target_path)
 
-            p.status('Installing')
-            result = process(['pm', 'install-create', target_path] + list(arguments)).recvall()
+        p.status('Installing')
+        result = process(['pm', 'install-create', target_path] + list(arguments)).recvall()
 
-            status = result.splitlines()[-1]
-            if 'Success' not in status:
-                log.error(status)
+        status = result.splitlines()[-1]
+        if 'Success' not in status:
+            log.error(status)
 
 def uninstall(package, *arguments):
     """Uninstall an APK from the device.
@@ -1585,9 +1580,8 @@ def uninstall(package, *arguments):
         package(str): Name of the package to uninstall (e.g. ``'com.foo.MyPackage'``)
         arguments: Supplementary arguments to ``'pm install'``, e.g. ``'-k'``.
     """
-    with log.progress("Uninstalling package {}".format(package)):
-        with context.quiet:
-            return process(['pm','uninstall',package] + list(arguments)).recvall()
+    with log.progress("Uninstalling package {}".format(package)), context.quiet:
+        return process(['pm','uninstall',package] + list(arguments)).recvall()
 
 @context.quietfunc
 def packages():

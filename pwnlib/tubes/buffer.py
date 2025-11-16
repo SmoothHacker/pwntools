@@ -62,10 +62,7 @@ class Buffer(object):
         >>> b'x' in b
         True
         """
-        for b in self.data:
-            if x in b:
-                return True
-        return False
+        return any(x in b for b in self.data)
 
     def index(self, x):
         """

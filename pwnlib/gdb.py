@@ -166,6 +166,7 @@ from pwnlib.timeout import Timeout
 from pwnlib.util import misc
 from pwnlib.util import packing
 from pwnlib.util import proc
+import contextlib
 
 log = getLogger(__name__)
 
@@ -734,10 +735,8 @@ def debug(args, gdbscript=None, gdb_args=None, exe=None, ssh=None, env=None, por
     # Some versions of gdbserver output an additional message
     message = b"Remote debugging from host "
     if not garbage.startswith(message):
-        try:
+        with contextlib.suppress(EOFError):
             garbage2 = gdbserver.recvline_startswith(message, timeout=2)
-        except EOFError:
-            pass
 
     return gdbserver
 
@@ -1266,7 +1265,7 @@ def attach(target, gdbscript = '', exe = None, gdb_args = None, ssh = None, sysr
             log.error('No such file: %s', exe)
         cmd += [exe]
 
-    if pid and not context.os == 'android':
+    if pid and context.os != 'android':
         cmd += ['-p', str(pid)]
 
     if context.os == 'android' and pid:
@@ -1337,7 +1336,7 @@ def attach(target, gdbscript = '', exe = None, gdb_args = None, ssh = None, sysr
             rpyc_check = [gdb_binary, '--nx', '-batch', '-ex',
                           'python import rpyc; import gdb; gdb.execute("quit 123")']
 
-            if 123 != tubes.process.process(rpyc_check).poll(block=True):
+            if tubes.process.process(rpyc_check).poll(block=True) != 123:
                 log.error('Failed to connect to GDB: rpyc is not installed')
 
             # Check to see if the socket ever got created
@@ -1503,7 +1502,7 @@ def find_module_addresses(binary, ssh=None, ulimit=False):
     for remote_path,text_address in sorted(libs.items()):
         # Match up the local copy to the remote path
         try:
-            path     = next(p for p in local_libs.keys() if remote_path in p)
+            path     = next(p for p in local_libs if remote_path in p)
         except StopIteration:
             print("Skipping %r" % remote_path)
             continue
@@ -1565,14 +1564,11 @@ def corefile(process):
                 '-ex', 'generate-core-file %s' % corefile_path,
                 '-ex', 'detach']
 
-    with context.local(terminal = ['sh', '-c']):
-        with context.quiet:
-            pid = attach(process, gdb_args=gdb_args)
-            log.debug("Got GDB pid %d", pid)
-            try:
-                psutil.Process(pid).wait()
-            except psutil.Error:
-                pass
+    with context.local(terminal = ['sh', '-c']), context.quiet:
+        pid = attach(process, gdb_args=gdb_args)
+        log.debug("Got GDB pid %d", pid)
+        with contextlib.suppress(psutil.Error):
+            psutil.Process(pid).wait()
 
     if not os.path.exists(corefile_path):
         log.error("Could not generate a corefile for process %d", process.pid)

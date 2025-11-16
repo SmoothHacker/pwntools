@@ -27,6 +27,7 @@ import socks
 from pwnlib.config import register_config
 from pwnlib.device import Device
 from pwnlib.timeout import Timeout
+import contextlib
 
 try:
     from collections.abc import Iterable
@@ -1233,8 +1234,7 @@ class ContextType(object):
             ...
             AttributeError: signed must be one of ['no', 'signed', 'unsigned', 'yes'] or a non-string truthy value
         """
-        try:             signed = self.signednesses[signed]
-        except KeyError: pass
+        with contextlib.suppress(KeyError):             signed = self.signednesses[signed]
 
         if isinstance(signed, str):
             raise AttributeError('signed must be one of %r or a non-string truthy value' % sorted(self.signednesses))

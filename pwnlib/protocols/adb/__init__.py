@@ -24,6 +24,7 @@ from pwnlib.util.misc import size
 from pwnlib.util.packing import p32
 from pwnlib.util.proc import pidof
 from pwnlib.util.sh_string import sh_string
+import contextlib
 
 log = getLogger(__name__)
 
@@ -176,10 +177,8 @@ class AdbClient(Logger):
             True
             >>> c.wait_for_device() # ensure doctests alive
         """
-        try:
+        with contextlib.suppress(EOFError):
             self.send('host:kill')
-        except EOFError:
-            pass
 
     @_autoclose
     def version(self):
@@ -286,7 +285,7 @@ class AdbClient(Logger):
         if isinstance(argv, str):
             argv = [argv]
         cmd = 'exec:%s' % (' '.join(map(sh_string, argv)))
-        if OKAY == self.send(cmd):
+        if self.send(cmd) == OKAY:
             rv = self._c
             self._c = None
             return rv

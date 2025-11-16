@@ -9,6 +9,7 @@ pwnlib.args.free_form = False
 
 from pwn import *
 from pwnlib.commandline import common
+import contextlib
 
 parser = common.parser_commands.add_parser(
     'asm',
@@ -125,8 +126,7 @@ def main(args):
 
     if fmt[0] == 'e':
         args.output.write(make_elf(output))
-        try: os.fchmod(args.output.fileno(), 0o700)
-        except OSError: pass
+        with contextlib.suppress(OSError): os.fchmod(args.output.fileno(), 0o700)
     else:
         output = formatters[fmt[0]](output)
         if not hasattr(output, 'decode'):

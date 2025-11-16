@@ -397,10 +397,9 @@ def find_min_hamming_in_range_step(prev, step, carry, strict):
     # requiring strictness if possible is not a problem since strictness will cost at most a single byte
     # (so if we don't get our wanted byte without strictness, we may as well require it if possible)
     val_require_strict = valbyte > upbyte or valbyte == upbyte and strict
-    if lowbyte + carryadd <= valbyte:
-        if prev[(0, val_require_strict)]:
-            prev_score, prev_val, prev_mask = prev[(0, val_require_strict)]
-            return prev_score + 1, (prev_val << 8) | valbyte, (prev_mask << 8) | 0xFF
+    if lowbyte + carryadd <= valbyte and prev[(0, val_require_strict)]:
+        prev_score, prev_val, prev_mask = prev[(0, val_require_strict)]
+        return prev_score + 1, (prev_val << 8) | valbyte, (prev_mask << 8) | 0xFF
 
     # now, we have two options: pick the wanted byte (forcing carry), or pick something else
     # check which option is better
@@ -495,7 +494,7 @@ def merge_atoms_overlapping(atoms, sz, szmax, numbwritten, overflows):
     if not szmax:
         szmax = max(SPECIFIER.keys())
 
-    assert 1 <= overflows, "must allow at least one overflow"
+    assert overflows >= 1, "must allow at least one overflow"
     assert sz <= szmax, "sz must be smaller or equal to szmax"
 
     maxwritten = numbwritten + (1 << (8 * sz)) * overflows
@@ -596,7 +595,7 @@ def overlapping_atoms(atoms):
 
 class AtomQueue(object):
     def __init__(self, numbwritten):
-        self.queues = { sz: SortedList(key=lambda atom: atom.integer) for sz in SPECIFIER.keys() }
+        self.queues = { sz: SortedList(key=lambda atom: atom.integer) for sz in SPECIFIER }
         self.positions = { sz: 0 for sz in SPECIFIER }
         self.numbwritten = numbwritten
 

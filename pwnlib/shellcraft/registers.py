@@ -259,7 +259,7 @@ def get_register(name):
     if isinstance(name, Register):
         return name
     if isinstance(name, str):
-        return intel.get(name, None)
+        return intel.get(name)
     return None
 
 def is_register(obj):

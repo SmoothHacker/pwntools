@@ -96,6 +96,7 @@ from pwnlib.util.misc import which
 from pwnlib.util.misc import write
 from pwnlib.util.packing import pack
 from pwnlib.util.packing import unpack_many
+import contextlib
 
 log = getLogger(__name__)
 
@@ -1134,10 +1135,8 @@ class Corefile(ELF):
             if k.startswith('_'):
                 continue
 
-            try:
+            with contextlib.suppress(Exception):
                 rv[k] = int(getattr(self.prstatus.pr_reg, k))
-            except Exception:
-                pass
 
         return rv
 
@@ -1257,11 +1256,10 @@ class CorefileFinder(object):
         """
 
         try:
-            with context.quiet:
-                with tempfile.NamedTemporaryFile() as tmp:
-                    tmp.write(self.read(self.core_path))
-                    tmp.flush()
-                    return Corefile(tmp.name).pid
+            with context.quiet, tempfile.NamedTemporaryFile() as tmp:
+                tmp.write(self.read(self.core_path))
+                tmp.flush()
+                return Corefile(tmp.name).pid
         except Exception:
             pass
 
@@ -1346,10 +1344,8 @@ class CorefileFinder(object):
             return None
 
         # Remove the crash file, so that future crashes will be captured
-        try:
+        with contextlib.suppress(Exception):
             self.unlink(crash_path)
-        except Exception:
-            pass
 
         # Convert bytes-like object to string
         if isinstance(data, bytes):

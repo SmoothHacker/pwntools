@@ -201,15 +201,9 @@ def options(prompt, opts, default = None):
             was_digit = False
             k = term.key.get()
             if   k == '<up>':
-                if cur is None:
-                    cur = 0
-                else:
-                    cur = max(0, cur - 1)
+                cur = 0 if cur is None else max(0, cur - 1)
             elif k == '<down>':
-                if cur is None:
-                    cur = 0
-                else:
-                    cur = min(len(opts) - 1, cur + 1)
+                cur = 0 if cur is None else min(len(opts) - 1, cur + 1)
             elif k == 'C-<up>':
                 cur = 0
             elif k == 'C-<down>':

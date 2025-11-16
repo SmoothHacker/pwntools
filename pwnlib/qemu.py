@@ -159,9 +159,8 @@ def ld_prefix(path=None, env=None):
     # Cyclic imports!
     from pwnlib.tubes.process import process
 
-    with context.quiet:
-        with process([path, '--help'], env=env) as io:
-            line = io.recvline_regex(b'QEMU_LD_PREFIX *=')
+    with context.quiet, process([path, '--help'], env=env) as io:
+        line = io.recvline_regex(b'QEMU_LD_PREFIX *=')
 
     _, libpath = line.split(b'=', 1)
 

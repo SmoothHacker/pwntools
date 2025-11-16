@@ -1008,10 +1008,7 @@ class ROP(object):
         size  = (stack.next - base)
         slot_address = base
         for i, slot in enumerate(stack):
-            if isinstance(slot, int):
-                pass
-
-            elif isinstance(slot, (bytes, str)):
+            if isinstance(slot, (int, bytes, str)):
                 pass
 
             elif isinstance(slot, AppendedArgument):

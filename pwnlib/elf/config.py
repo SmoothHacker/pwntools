@@ -2,6 +2,7 @@
 Kernel-specific ELF functionality
 """
 from __future__ import division
+import contextlib
 
 class KernelConfig(object):
     def __init__(self, name, title, requires=[], excludes=[], minver=0, maxver=99):
@@ -248,10 +249,8 @@ def parse_kconfig(data):
             else:
 
                 # Integer conversions
-                try:
+                with contextlib.suppress(ValueError):
                     v = int(v, 0)
-                except ValueError:
-                    pass
 
             config[k] = v
 

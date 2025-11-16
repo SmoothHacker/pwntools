@@ -52,9 +52,7 @@ class SphinxPwnlibFilter(logging.Filter):
     def filter(self, record):
         if record.name.startswith('pwn'):
             return False
-        if record.name.startswith('paramiko'):
-            return False
-        return True
+        return not record.name.startswith('paramiko')
 
 log_filter = SphinxPwnlibFilter()
 
@@ -419,9 +417,7 @@ class PlatformDocTestRunner(sphinx.ext.doctest.SphinxDocTestRunner):
                 return False
             if (optionflags & LINUX) == LINUX and sys.platform != 'linux':
                 return False
-            if (optionflags & POSIX) == POSIX and os.name != 'posix':
-                return False
-            return True
+            return not (optionflags & POSIX == POSIX and os.name != 'posix')
                 
         test.examples[:] = [example for example in test.examples if filter_platform(example)]
             

@@ -310,11 +310,10 @@ class Cell(object):
                     # cell got neither moved nor erased
                     break
 
-            if pos[1] < cell.pos[1]:
+            if pos[1] < cell.pos[1] and (not erase_line and erased_line != pos[0]):
                 # the cell moved left, it must be same line as self; erase if not yet erased
-                if not erase_line and erased_line != pos[0]:
-                    do('el')
-                    erased_line = pos[0]
+                do('el')
+                erased_line = pos[0]
 
             old_after = cell.pos_after
             cell.draw()

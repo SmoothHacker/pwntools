@@ -812,12 +812,10 @@ def bruteforce(func, alphabet, length, method = 'upto', start = None, databag = 
         total_iterations = chunk_size
 
     h = log.waitfor('Bruteforcing')
-    cur_iteration = 0
     if start is not None:
         consume(i, iterator)
-    for e in iterator:
+    for cur_iteration, e in enumerate(iterator):
         cur = ''.join(e)
-        cur_iteration += 1
         if cur_iteration % 2000 == 0:
             progress = 100.0 * cur_iteration / total_iterations
             h.status('Trying "%s", %0.3f%%' % (cur, progress))
