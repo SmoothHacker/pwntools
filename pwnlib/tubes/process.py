@@ -31,7 +31,6 @@ from pwnlib.log import getLogger
 from pwnlib.timeout import Timeout
 from pwnlib.tubes.tube import tube
 from pwnlib.util.hashes import sha256file
-from pwnlib.util.misc import parse_ldd_output
 from pwnlib.util.misc import which
 from pwnlib.util.misc import normalize_argv_env
 from pwnlib.util.packing import _decode

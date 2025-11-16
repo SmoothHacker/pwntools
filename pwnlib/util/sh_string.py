@@ -242,12 +242,10 @@ from __future__ import absolute_import
 from __future__ import division
 
 import string
-import subprocess
 
 from pwnlib.context import context
 from pwnlib.log import getLogger
 from pwnlib.tubes.process import process
-from pwnlib.util import fiddling
 from pwnlib.util.misc import which, normalize_argv_env
 
 log = getLogger(__name__)

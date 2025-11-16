@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 
-import pwnlib
 from pwnlib.context import context
 import contextlib
 

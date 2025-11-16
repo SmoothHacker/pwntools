@@ -3,24 +3,19 @@ from __future__ import division
 from __future__ import unicode_literals
 
 import atexit
-import errno
 import os
-import re
 import shutil
 import signal
-import struct
 import sys
 import threading
 import traceback
 import weakref
 
 if sys.platform != 'win32':
-    import fcntl
     import termios
 
 from ..context import ContextType
 from . import termcap
-from .. import py2compat
 
 __all__ = ['output', 'init']
 

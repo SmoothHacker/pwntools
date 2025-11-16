@@ -6,7 +6,6 @@ from __future__ import division
 
 import os
 import time
-import tempfile
 import struct
 
 from pwnlib.context import context

@@ -3,7 +3,6 @@ from __future__ import division
 
 import errno
 import socket
-import threading
 
 from pwnlib.context import context
 from pwnlib.log import getLogger

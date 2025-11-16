@@ -4,7 +4,6 @@ from __future__ import division
 import argparse
 import os
 import sys
-import types
 
 import pwnlib.args
 pwnlib.args.free_form = False

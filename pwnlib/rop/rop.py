@@ -361,7 +361,6 @@ from __future__ import absolute_import
 from __future__ import division
 
 import collections
-import copy
 import hashlib
 import itertools
 import os
@@ -369,8 +368,6 @@ import re
 import shutil
 import string
 import struct
-import sys
-import tempfile
 
 from pwnlib import abi
 from pwnlib import constants
@@ -379,12 +376,10 @@ from pwnlib.context import context
 from pwnlib.elf import ELF
 from pwnlib.log import getLogger
 from pwnlib.rop import srop
-from . import ret2dlresolve
 from pwnlib.rop.call import AppendedArgument
 from pwnlib.rop.call import Call
 from pwnlib.rop.call import CurrentStackPointer
 from pwnlib.rop.call import NextGadgetAddress
-from pwnlib.rop.call import StackAdjustment
 from pwnlib.rop.call import Unresolved
 from pwnlib.rop.gadgets import Gadget
 from pwnlib.util import lists
@@ -595,7 +590,6 @@ class ROP(object):
             base(int): Stack address where the first byte of the ROP chain lies, if known.
             badchars(str): Characters which should not appear in ROP gadget addresses.
         """
-        import ropgadget
 
         # Permit singular ROP(elf) vs ROP([elf])
         if isinstance(elfs, ELF):

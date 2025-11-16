@@ -16,7 +16,6 @@ from pwnlib import term
 from pwnlib.context import context, LocalContext
 from pwnlib.exception import PwnlibException
 from pwnlib.log import Logger
-from pwnlib.log import getLogger
 from pwnlib.term import text
 from pwnlib.timeout import Timeout
 from pwnlib.tubes.sock import sock

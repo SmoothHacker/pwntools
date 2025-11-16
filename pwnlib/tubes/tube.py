@@ -6,7 +6,6 @@ import abc
 import logging
 import os
 import re
-import string
 import subprocess
 import sys
 import threading

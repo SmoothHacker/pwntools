@@ -3,10 +3,8 @@ from __future__ import division
 
 from pwnlib import shellcraft
 from pwnlib.asm import asm
-from pwnlib.context import context
 from pwnlib.encoders.encoder import Encoder
 from pwnlib.util.fiddling import xor_key
-from pwnlib.util.lists import group
 from pwnlib.util.packing import u8
 
 

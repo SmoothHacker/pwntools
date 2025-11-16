@@ -162,15 +162,12 @@ Mipsel Example:
 from __future__ import absolute_import
 from __future__ import division
 
-from collections import namedtuple
 
 from pwnlib.abi import ABI
 from pwnlib.context import LocalContext
 from pwnlib.context import context
 from pwnlib.log import getLogger
-from pwnlib.util.packing import flat
 from pwnlib.util.packing import pack
-from pwnlib.util.packing import unpack_many
 
 log = getLogger(__name__)
 

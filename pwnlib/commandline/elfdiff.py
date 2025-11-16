@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from __future__ import division
 
 import shutil
-from argparse import ArgumentParser
 from subprocess import CalledProcessError
 from subprocess import check_output
 from tempfile import NamedTemporaryFile

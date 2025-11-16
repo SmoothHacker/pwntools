@@ -95,7 +95,6 @@ Example - Automated exploitation
 """
 from __future__ import division
 
-import logging
 import re
 from operator import itemgetter
 from sortedcontainers import SortedList

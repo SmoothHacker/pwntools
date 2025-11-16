@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from __future__ import division
 
 from pwnlib.context import context
-from pwnlib.util.fiddling import hexdump
 from pwnlib.util.packing import unpack
 
 

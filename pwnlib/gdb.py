@@ -146,7 +146,6 @@ import platform
 import psutil
 import random
 import re
-import socket
 import tempfile
 from threading import Event
 import time

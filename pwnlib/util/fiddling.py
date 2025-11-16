@@ -6,7 +6,6 @@ import base64
 import binascii
 import random
 import re
-import os
 import string
 
 from io import BytesIO
@@ -18,9 +17,7 @@ from pwnlib.term import text
 from pwnlib.util import iters
 from pwnlib.util import lists
 from pwnlib.util import packing
-from pwnlib.util.cyclic import cyclic
 from pwnlib.util.cyclic import de_bruijn
-from pwnlib.util.cyclic import cyclic_find
 
 log = getLogger(__name__)
 

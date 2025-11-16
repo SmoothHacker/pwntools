@@ -25,8 +25,6 @@
 from __future__ import absolute_import
 from __future__ import division
 
-from pwnlib import asm
-from pwnlib import shellcraft
 from pwnlib.context import context
 from pwnlib.encoders.encoder import Encoder
 from pwnlib.util.fiddling import xor_key

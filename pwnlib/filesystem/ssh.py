@@ -5,12 +5,8 @@ Handles file abstraction for remote SSH files
 Emulates pathlib as much as possible, but does so through duck typing.
 """
 import os
-import sys
-import tempfile
-import time
 
 from pwnlib.context import context
-from pwnlib.util.misc import read, write
 from pwnlib.util.packing import _encode, _decode
 
 from pathlib import *

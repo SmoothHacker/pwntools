@@ -57,7 +57,7 @@ import tempfile
 
 from io import BytesIO
 
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 
 from elftools.elf.constants import P_FLAGS
 from elftools.elf.constants import SHN_INDICES
@@ -65,10 +65,8 @@ from elftools.elf.descriptions import describe_e_type
 from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
 from elftools.elf.enums import ENUM_GNU_PROPERTY_X86_FEATURE_1_FLAGS
-from elftools.elf.gnuversions import GNUVerDefSection
 from elftools.elf.relocation import RelocationSection, RelrRelocationSection
 from elftools.elf.sections import SymbolTableSection
-from elftools.elf.segments import InterpSegment
 
 # See https://github.com/Gallopsled/pwntools/issues/1189
 try:
@@ -95,7 +93,6 @@ from pwnlib.util import misc
 from pwnlib.util import packing
 from pwnlib.util.fiddling import unhex
 from pwnlib.util.misc import align, align_down, which
-from pwnlib.util.sh_string import sh_string
 import contextlib
 
 log = getLogger(__name__)

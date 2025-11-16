@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import os
 import sys
-import tempfile
 
 from pwnlib.context import LocalContext, context
 from pwnlib.elf import ELF

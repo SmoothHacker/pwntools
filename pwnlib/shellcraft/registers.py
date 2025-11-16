@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from __future__ import division
 
-import re
 
 from pwnlib.context import context
 from pwnlib.util.misc import register_sizes

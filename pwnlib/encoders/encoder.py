@@ -5,7 +5,6 @@ from __future__ import division
 import collections
 import random
 import re
-import string
 
 from pwnlib.context import LocalContext
 from pwnlib.context import context

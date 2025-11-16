@@ -63,8 +63,6 @@ Module Members
 from __future__ import absolute_import
 from __future__ import division
 
-import collections
-import ctypes
 import glob
 import gzip
 import re
@@ -76,9 +74,6 @@ import tempfile
 from io import BytesIO, StringIO
 
 import elftools
-from elftools.common.utils import roundup
-from elftools.common.utils import struct_parse
-from elftools.construct import CString
 
 from pwnlib import atexit
 from pwnlib.context import context

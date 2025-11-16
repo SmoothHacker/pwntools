@@ -1,7 +1,6 @@
 import os
 import msvcrt
 import ctypes
-import sys
 from ctypes import wintypes
 
 __all__ = ['get']

@@ -97,9 +97,7 @@ from __future__ import division
 import logging
 import os
 import random
-import re
 import string
-import sys
 import threading
 import time
 

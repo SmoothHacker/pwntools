@@ -6,7 +6,6 @@ import socket
 
 from pwnlib.context import context
 from pwnlib.log import getLogger
-from pwnlib.timeout import Timeout
 from pwnlib.tubes.sock import sock
 
 log = getLogger(__name__)

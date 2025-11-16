@@ -1,14 +1,12 @@
 from __future__ import division
 
 import json
-import base64
 import errno
 import os
 import re
 import signal
 import socket
 import stat
-import string
 import subprocess
 import sys
 import tempfile
@@ -20,7 +18,6 @@ from pwnlib import atexit
 from pwnlib.context import context
 from pwnlib.log import getLogger
 from pwnlib.timeout import Timeout
-from pwnlib.util import fiddling
 from pwnlib.util import lists
 from pwnlib.util import packing
 

@@ -23,19 +23,16 @@ from __future__ import absolute_import
 from __future__ import division
 
 import datetime
-import json
 import os
 import time
 
 import packaging.version
 
-from pwnlib.args import args
 from pwnlib.config import register_config
 from pwnlib.context import context
 from pwnlib.log import getLogger
 from pwnlib.util.misc import read
 from pwnlib.util.misc import write
-from pwnlib.util.web import wget
 from pwnlib.version import __version__
 
 log = getLogger(__name__)
