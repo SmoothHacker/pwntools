@@ -1501,7 +1501,7 @@ class CorefileFinder(object):
             '%s': str(-self.process.poll()),
             '%u': str(self.uid)
         }
-        replace = dict((re.escape(k), v) for k, v in replace.items())
+        replace = {re.escape(k): v for k, v in replace.items()}
         pattern = re.compile("|".join(replace.keys()))
         if not hasattr(self.kernel_core_pattern, 'encode'):
             self.kernel_core_pattern = self.kernel_core_pattern.decode('utf-8')

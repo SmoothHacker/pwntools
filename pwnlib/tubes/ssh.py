@@ -1731,7 +1731,7 @@ from ctypes import *; libc = CDLL('libc.so.6'); print(libc.getenv(%r))
         libs[remote] = 0
 
         if flatten:
-            basenames = dict()
+            basenames = {}
 
             # If there is a duplicate switch to unflattened download
             for lib in libs:

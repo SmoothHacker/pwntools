@@ -306,7 +306,7 @@ def regsort(in_out, all_regs, mapping = None, tmp = None, xchg = True, randomize
     #
     # Given that everything is single-assignment, the cycles
     # are guarnteed to be disjoint.
-    cycle_candidates = sorted(list(in_out))
+    cycle_candidates = sorted(in_out)
     cycles           = []
     in_cycle         = []
     not_in_cycle     = []

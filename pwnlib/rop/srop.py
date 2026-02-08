@@ -368,7 +368,7 @@ class SigreturnFrame(dict):
         self.arch = context.arch
         self.endian = context.endian
         self._regs = [self.registers[i] for i in sorted(self.registers.keys())]
-        self.update({r:0 for r in self._regs})
+        self.update(dict.fromkeys(self._regs, 0))
         self.size = len(bytes(self))
         self.update(defaults[self.arch])
 

@@ -304,7 +304,7 @@ def _gdbserver_args(pid=None, path=None, port=0, gdbserver_args=None, args=None,
         A list of arguments to invoke gdbserver.
     """
     if gdbserver_args is None:
-        gdbserver_args = list()
+        gdbserver_args = []
     elif not isinstance(gdbserver_args, (list, tuple)):
         gdbserver_args = [gdbserver_args]
 

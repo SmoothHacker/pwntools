@@ -652,7 +652,7 @@ def _fit(pieces, preprocessor, packer, filler, stacklevel=1):
     # Key conversion:
     # - convert str/unicode keys to offsets
     # - convert large int (no null-bytes in a machine word) keys to offsets
-    pieces_ = dict()
+    pieces_ = {}
     large_key = 2**(context.word_size-8)
     for k, v in pieces.items():
         if isinstance(k, int):

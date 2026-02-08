@@ -95,7 +95,7 @@ def main(args):
             lines.append((o, b, i))
 
 
-        highlight_bytes = lambda t: ''.join(map(lambda x: x.replace('00', text.red('00')).replace('0a', text.red('0a')), group(2, t)))
+        highlight_bytes = lambda t: ''.join((x.replace('00', text.red('00')).replace('0a', text.red('0a')) for x in group(2, t)))
         for line in lines:
             if len(line) == 3:
                 o, b, i = line

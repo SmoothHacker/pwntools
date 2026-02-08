@@ -979,7 +979,7 @@ def mbruteforce(func, alphabet, length, method = 'upto', start = None, threads =
                     h.success('Found key: "%s"' % res)
                     return res
 
-                if all([x is None for x in processes]):
+                if all(x is None for x in processes):
                     done = True
         time.sleep(0.3)
     h.failure('No matches found')

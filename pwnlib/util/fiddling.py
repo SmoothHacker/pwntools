@@ -387,7 +387,7 @@ def xor_pair(data, avoid = b'\x00\n'):
         avoid = avoid.encode('utf-8')
 
     avoid = bytearray(avoid)
-    alphabet = list(packing._p8lu(n) for n in range(256) if n not in avoid)
+    alphabet = [packing._p8lu(n) for n in range(256) if n not in avoid]
 
     res1 = b''
     res2 = b''

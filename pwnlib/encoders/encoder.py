@@ -104,7 +104,7 @@ def encode(raw_bytes, avoid=None, expr=None, force=0, pcreg=''):
     msg = msg.replace('%', '%%')
     log.error(msg)
 
-all_chars        = list(chr(i) for i in range(256))
+all_chars        = [chr(i) for i in range(256)]
 re_alphanumeric  = r'[^A-Za-z0-9]'
 re_printable     = r'[^\x21-\x7e]'
 re_whitespace    = r'\s'

@@ -652,7 +652,7 @@ class ROP(object):
 
         regset = set(registers)
 
-        bad_instructions = set(('syscall', 'sysenter', 'int 0x80'))
+        bad_instructions = {'syscall', 'sysenter', 'int 0x80'}
 
         # Collect all gadgets which use these registers
         # Also collect the "best" gadget for each combination of registers
@@ -1314,7 +1314,7 @@ class ROP(object):
         # >>> valid('add esp, esi')
         # False
         #
-        valid = lambda insn: any(map(lambda pattern: pattern.match(insn), [pop,add,ret,leave,int80,syscall,sysenter]))
+        valid = lambda insn: any((pattern.match(insn) for pattern in [pop,add,ret,leave,int80,syscall,sysenter]))
 
         gadgets = {}
         for elf in self.elfs:
@@ -1389,7 +1389,7 @@ class ROP(object):
             self.gadgets[addr] = Gadget(addr, insns, regs, sp_move)
 
             # Don't use 'pop esp' for pivots
-            if not set(['rsp', 'esp']) & set(regs):
+            if not {'rsp', 'esp'} & set(regs):
                 self.pivots[sp_move] = addr
 
         leave = self.search(regs=frame_regs, order='leav')
@@ -1617,7 +1617,7 @@ class ROP(object):
         #
         # Check for a '_'-delimited list of registers
         #
-        if all(map(lambda x: x[-2:] in self.X86_SUFFIXES, attr.split('_'))):
+        if all((x[-2:] in self.X86_SUFFIXES for x in attr.split('_'))):
             return self.search(regs=attr.split('_'), order='regs')
 
         #

@@ -1190,15 +1190,15 @@ class ELF(ELFFile):
         # If there's no delay slot, execution continues on the next instruction after a call.
         call_return_offset = 1
         if self.arch in ['arm', 'thumb']:
-            call_instructions = set(['blx', 'bl'])
+            call_instructions = {'blx', 'bl'}
         elif self.arch == 'aarch64':
-            call_instructions = set(['blr', 'bl'])
+            call_instructions = {'blr', 'bl'}
         elif self.arch in ['mips', 'mips64']:
-            call_instructions = set(['bal', 'jalr'])
+            call_instructions = {'bal', 'jalr'}
             # Account for the delay slot.
             call_return_offset = 2
         elif self.arch in ['i386', 'amd64', 'ia64']:
-            call_instructions = set(['call'])
+            call_instructions = {'call'}
         else:
             log.error('Unsupported architecture %s in ELF.libc_start_main_return', self.arch)
             return 0

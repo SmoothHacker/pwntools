@@ -378,7 +378,7 @@ class ContextType(object):
         'proxy': None,
         'ssh_session': None,
         'signed': False,
-        'terminal': tuple(),
+        'terminal': (),
         'timeout': Timeout.maximum,
     }
 
