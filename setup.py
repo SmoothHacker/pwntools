@@ -12,8 +12,7 @@ from setuptools import setup
 # Get all template files
 templates = []
 for dirpath, dirnames, filenames in os.walk(convert_path('pwnlib/shellcraft/templates'), followlinks=True):
-    for f in filenames:
-        templates.append(os.path.relpath(os.path.join(dirpath, f), 'pwnlib'))
+    templates.extend(os.path.relpath(os.path.join(dirpath, f), 'pwnlib') for f in filenames)
 
 # This makes pwntools-LICENSE.txt appear with the package folders
 for scheme in INSTALL_SCHEMES.values():

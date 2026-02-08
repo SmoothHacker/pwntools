@@ -268,9 +268,7 @@ class Call(object):
 
     def __str__(self):
         fmt = "%#x" if isinstance(self.target, int) else "%r"
-        args = []
-        for arg in self.args:
-            args.append(self._special_repr(arg))
+        args = [self._special_repr(arg) for arg in self.args]
 
         name = self.name or (fmt % self.target)
         arg_str = []

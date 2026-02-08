@@ -80,10 +80,7 @@ def group(n, lst, underfull_action = 'ignore', fill_value = None):
         else:
             raise ValueError("group(): 'lst' must be either a tuple, list or string")
 
-    out = []
-    for i in range(0, len(lst), n):
-        out.append(lst[i:i+n])
-
+    out = [lst[i:i+n] for i in range(0, len(lst), n)]
     if out and len(out[-1]) < n:
         if underfull_action == 'ignore':
             pass

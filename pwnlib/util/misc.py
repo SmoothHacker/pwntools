@@ -728,8 +728,7 @@ def register_sizes(regs, in_sizes):
     smaller = {}
 
     for l in regs:
-        for r, s in zip(l, in_sizes):
-            sizes[r] = s
+        sizes.update({r: s for r, s in zip(l, in_sizes)})
 
         for r in l:
             bigger[r] = [r_ for r_ in l if sizes[r_] > sizes[r] or r == r_]

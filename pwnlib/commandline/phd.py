@@ -97,8 +97,7 @@ def main(args):
     hl = []
     if args.highlight:
         for hs in args.highlight:
-            for h in hs.split(','):
-                hl.append(asint(h))
+            hl.extend(asint(h) for h in hs.split(','))
 
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 

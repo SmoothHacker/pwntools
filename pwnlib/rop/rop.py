@@ -1409,7 +1409,7 @@ class ROP(object):
         move = move or 0
         regs = set(regs or ())
 
-        for addr, gadget in self.gadgets.items():
+        for gadget in self.gadgets.values():
             addr_bytes = set(pack(gadget.address))
             if addr_bytes & self._badchars:     continue
             if gadget.insns[-1] != 'ret':        continue

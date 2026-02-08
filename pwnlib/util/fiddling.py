@@ -237,11 +237,7 @@ def bitswap(s):
         b'\\x8cL\\xcc,'
     """
 
-    out = []
-
-    for c in s:
-        out.append(unbits(bits_str(c)[::-1]))
-
+    out = [unbits(bits_str(c)[::-1]) for c in s]
     return b''.join(out)
 
 def bitswap_int(n, width):

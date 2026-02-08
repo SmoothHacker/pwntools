@@ -227,10 +227,7 @@ class BitPolynom(object):
         if int(self) == 0:
             return '0'
 
-        out = []
-        for n in range(self.degree(), 1, -1):
-            if int(self) & (1 << n):
-                out.append("x**%d" % n)
+        out = ["x**%d" % n for n in range(self.degree(), 1, -1) if int(self) & (1 << n)]
         if int(self) & 2:
             out.append("x")
         if int(self) & 1:

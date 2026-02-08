@@ -1054,10 +1054,7 @@ class process(tube):
                     return mapping
             return None
 
-        m_mappings = []
-        for mapping in all_maps:
-            if path_value == mapping.path:
-                m_mappings.append(mapping)
+        m_mappings = [mapping for mapping in all_maps if path_value == mapping.path]
         return m_mappings
 
     def stack_mapping(self, single=True):

@@ -1070,8 +1070,7 @@ class ContextType(object):
             ' Started at %s ' % time.strftime(iso_8601),
             ' sys.argv = [',
             ]
-        for arg in sys.argv:
-            lines.append('   %r,' % arg)
+        lines.extend('   %r,' % arg for arg in sys.argv)
         lines.append(' ]')
         lines.append('=' * 78)
         for line in lines:

@@ -279,10 +279,8 @@ def unpack_many(data, word_size = None):
     if word_size % 8 != 0:
         raise ValueError("unpack_many(): word_size must be a multiple of 8")
 
-    out = []
     n = word_size // 8
-    for i in range(0, len(data), n):
-        out.append(unpack(data[i:i+n], word_size))
+    out = [unpack(data[i:i+n], word_size) for i in range(0, len(data), n)]
 
     return list(map(int, out))
 
