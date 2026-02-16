@@ -597,7 +597,7 @@ def overlapping_atoms(atoms):
 class AtomQueue(object):
     def __init__(self, numbwritten):
         self.queues = { sz: SortedList(key=lambda atom: atom.integer) for sz in SPECIFIER.keys() }
-        self.positions = { sz: 0 for sz in SPECIFIER }
+        self.positions = dict.fromkeys(SPECIFIER, 0)
         self.numbwritten = numbwritten
 
     def add(self, atom):
